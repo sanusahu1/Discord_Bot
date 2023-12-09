@@ -2,11 +2,13 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 require('dotenv').config();
 const express = require("express");
+const axios = require("axios");
 const app = express();
 const PORT = 8003;
 const { generateShortUrl } = require("./controller/url");
 
 const token = process.env.TOKEN;
+const  openaiApiKey = process.env.AI;
 
 const { connectToMongoDB } = require("./database");
 connectToMongoDB('mongodb://127.0.0.1:27017/MVC?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.2')
@@ -41,6 +43,15 @@ client.on('messageCreate', async (message) => {
         }
     }
 
+    if (message.content.startsWith('ai')) {
+        const prompt = message.content.slice(2).trim();
+        const aiResponse = await generateAIResponse(prompt);
+
+        return message.reply({
+            content: aiResponse,
+        });
+    }
+
     message.reply({
         content: "Hi From Bot",
     });
@@ -51,6 +62,32 @@ client.on('interactionCreate', (interaction) => {
     //console.log(interaction);
     interaction.reply("Pong....!!!!");
 });
+
+async function generateAIResponse(prompt) {
+    const apiUrl = "https://api.openai.com/v1/engines/davinci/completions"; 
+
+    try {
+        const response = await axios.post(
+            apiUrl,
+            {
+                prompt: prompt,
+                max_tokens: 100,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${openaiApiKey}`,
+                },
+            }
+        );
+
+        return response.data.choices[0].text.trim();
+    } catch (error) {
+        console.error("Error generating AI response:", error.response ? error.response.data : error.message);
+        return "Error generating AI response. Please try again later.";
+    }
+}
+
 client.login(token);
 
 app.listen(PORT, () => console.log(`Server Started At PORT :${PORT}`));
