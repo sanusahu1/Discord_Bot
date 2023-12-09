@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "name": "discord-bot-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Created a own discord bot for ahndling the messages and commands .",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanusahu1/Discord_Bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sanusahu1/Discord_Bot/issues"
+  },
+  "homepage": "https://github.com/sanusahu1/Discord_Bot#readme"
+}
